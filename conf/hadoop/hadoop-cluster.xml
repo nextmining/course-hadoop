@@ -19,7 +19,7 @@
         <!--
         <value>resourcemanager:8032</value>
         -->
-        <value>nextmining04:8032</value>
+        <value>nextmining04:8035</value>
     </property>
 
 </configuration>
