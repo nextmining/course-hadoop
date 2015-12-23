@@ -15,7 +15,7 @@ MY_HDFS_HOME=/lineplus/ygbae
 
 # For hadoop
 HADOOP_HOME=/usr/local/hadoop-2.6.0
-export HADOOP_CONF_DIR="~/hadoop-conf"
+export HADOOP_CONF_DIR="/home/lineplus/hadoop-conf"
 
 HADOOP="${HADOOP_HOME}/bin/hadoop --config $HADOOP_CONF_DIR"
 
