@@ -13,9 +13,7 @@ repositories {
     // dependencies에 정의된 라이브러리들을 다운로드 못하는 문제가 발생할 수 있다.
     // 따라서 이 경우를 대비해 아래 maven repository url을 직접 명시한다.
     mavenCentral()
-    maven  {
-        url "http://repo1.maven.org/maven2"
-    }
+    maven { url "http://repo1.maven.org/maven2" }
 }
 
 dependencies {

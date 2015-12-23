@@ -39,7 +39,7 @@ word_count()
 ##################################
 
 run_word_count() {
-	word_count "/coll/twitter/kpop" "${MY_HDFS_HOME}/word_count" "3"
+	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count" "3"
 }
 
 CMD=$1
