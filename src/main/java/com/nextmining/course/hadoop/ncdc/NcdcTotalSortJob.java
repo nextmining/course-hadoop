@@ -3,11 +3,11 @@ package com.nextmining.course.hadoop.ncdc;
 import com.nextmining.hadoop.mapreduce.AbstractJob;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.lib.InputSampler;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -15,6 +15,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.TotalOrderPartitioner;
 import org.apache.hadoop.util.ToolRunner;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,8 +65,12 @@ public class NcdcTotalSortJob extends AbstractJob {
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(NcdcTotalSortJob.class);
-        job.setMapOutputKeyClass(LongWritable.class);
+        job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(Text.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(NullWritable.class);
+        job.setMapperClass(NcdcTotalSortMapper.class);
+        job.setReducerClass(NcdcTotalSortReducer.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
@@ -72,25 +78,94 @@ public class NcdcTotalSortJob extends AbstractJob {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
+        //job.setSortComparatorClass(KeyComparator.class);
 
-        Path partitionFile = new Path("/user/lineplus/ygbae/ncdc/total_sort_partition", "_partition");
-        TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
+        //Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
+        //Path partitionFile = new Path(inputDir, "_partition");
+        //TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
 
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 5000;
-        int maximumNumberOfSplits = 5;
-        InputSampler.Sampler<LongWritable, Text> sampler =
-                new InputSampler.RandomSampler<LongWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
+        int maximumNumberOfSplits = 3;
+        InputSampler.Sampler<IntWritable, Text> sampler =
+                new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
 
         InputSampler.writePartitionFile(job, sampler);
 
         // Add to DistributedCache
-        /*
         String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
-        */
 
         return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    /**
+     * Comparator for sorting values by descending.
+     */
+    public static class KeyComparator extends WritableComparator {
+
+        protected KeyComparator() {
+            super(IntWritable.class, true);
+        }
+
+        /**
+         * Compares in the descending order of the keys.
+         */
+        @Override
+        public int compare(WritableComparable a, WritableComparable b) {
+            IntWritable o1 = (IntWritable) a;
+            IntWritable o2 = (IntWritable) b;
+            if (o1.get() < o2.get()) {
+                return 1;
+            } else if(o1.get() > o2.get()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * Mapper.
+     */
+    public static class NcdcTotalSortMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+
+        private NcdcRecordParser parser = new NcdcRecordParser();
+
+        @Override
+        public void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+
+            parser.parse(value);
+
+            if (parser.isValidTemperature()) {
+                String year = parser.getYear();
+                int airTemperature = parser.getAirTemperature();
+
+                context.write(new IntWritable(airTemperature), new Text(year + "\t" + airTemperature));
+            }
+            else if (parser.isMalformedTemperature()) {
+                System.err.println("Ignoring possibly corrupt input: " + value);
+                context.getCounter(Temperature.MALFORMED).increment(1);
+            }
+            else if (parser.isMissingTemperature()) {
+                context.getCounter(Temperature.MISSING).increment(1);
+            }
+        }
+    }
+
+    /**
+     * Reducer.
+     */
+    public static class NcdcTotalSortReducer extends Reducer<IntWritable, Text, Text, NullWritable> {
+
+        public void reduce(IntWritable key, Iterable<Text> values, Context context)
+                throws IOException, InterruptedException {
+
+            for (Text val : values) {
+                context.write(val, NullWritable.get());
+            }
+        }
     }
 }

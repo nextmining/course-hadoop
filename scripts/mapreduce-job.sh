@@ -53,7 +53,7 @@ total_sort_ncdc()
 {
 	local input=$1
 	local output=$2
-	local num_reducers=1
+	local num_reducers=4
 
 	$HADOOP fs -rmr ${output} >& /dev/null || true
 
@@ -80,7 +80,7 @@ run_partial_sort_ncdc() {
 }
 
 run_total_sort_ncdc() {
-    total_sort_ncdc "${MY_HDFS_HOME}/ncdc/partial_sort" "${MY_HDFS_HOME}/ncdc/total_sort"
+    total_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
 }
 
 CMD=$1
