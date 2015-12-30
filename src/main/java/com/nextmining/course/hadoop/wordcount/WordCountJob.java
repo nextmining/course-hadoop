@@ -57,23 +57,21 @@ public class WordCountJob extends AbstractJob {
         Configuration conf = getConf();
 
         Job job = Job.getInstance(conf);
-        job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
-        job.setJarByClass(WordCountJob.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
-        job.setMapperClass(WordCountMapper.class);
-        job.setReducerClass(WordCountReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());   // 맵리듀스 잡 이름
+        job.setJarByClass(WordCountJob.class);                          // 잡 드라이버 클래스명
+        job.setMapOutputKeyClass(Text.class);                           // 매퍼 출력 key 데이터타입
+        job.setMapOutputValueClass(IntWritable.class);                  // 매퍼 출력 value 데이터타입
+        job.setOutputKeyClass(Text.class);                              // 리듀서 출력 key 데이터타입
+        job.setOutputValueClass(IntWritable.class);                     // 리듀서 출력 value 데이터타입
+        job.setMapperClass(WordCountMapper.class);                      // 매퍼 클래스명
+        job.setReducerClass(WordCountReducer.class);                    // 리듀서 클래스명
+        job.setInputFormatClass(TextInputFormat.class);                 // 입력데이터 포맷
+        job.setOutputFormatClass(TextOutputFormat.class);               // 출력데이터 포맷
 
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        job.waitForCompletion(true);
-
-        return 0;
+        return job.waitForCompletion(true) ? 0 : 1;
     }
 
     /**
@@ -84,8 +82,13 @@ public class WordCountJob extends AbstractJob {
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
 
+
+        /**
+         * 보통의 경우 setup 함수는 구현할 필요가 없으며,
+         * Job Driver로 부터 전달되는 파라미터 등을 Configuration 객체에서 꺼내서 사용할 필요가 있을 때 구현해 준다.
+         */
         @Override
-        public void setup(Mapper.Context context) throws IOException, InterruptedException {
+        public void setup(Context context) throws IOException, InterruptedException {
             super.setup(context);
             //Configuration conf = context.getConfiguration();
         }
@@ -104,18 +107,28 @@ public class WordCountJob extends AbstractJob {
     /**
      * Reducer.
      */
-    public static class WordCountReducer extends Reducer<Text,IntWritable,Text,IntWritable> {
-        private IntWritable result = new IntWritable();
+public static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    private IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
-            int sum = 0;
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            result.set(sum);
-            context.write(key, result);
-        }
+    /**
+     * 보통의 경우 setup 함수는 구현할 필요가 없으며,
+     * Job Driver로 부터 전달되는 파라미터 등을 Configuration 객체에서 꺼내서 사용할 필요가 있을 때 구현해 준다.
+     */
+    @Override
+    public void setup(Context context) throws IOException, InterruptedException {
+        super.setup(context);
+        //Configuration conf = context.getConfiguration();
     }
+
+    public void reduce(Text key, Iterable<IntWritable> values, Context context)
+            throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        result.set(sum);
+        context.write(key, result);
+    }
+}
 
 }
