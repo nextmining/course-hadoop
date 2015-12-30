@@ -14,6 +14,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.TotalOrderPartitioner;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +32,8 @@ import java.util.Set;
  * @author Younggue Bae
  */
 public class NcdcTotalSortJob extends AbstractJob {
+
+    private static final Logger logger = LoggerFactory.getLogger(NcdcTotalSortJob.class);
 
     private static final String JOB_NAME_PREFIX = "[ygbae]";
 
@@ -94,7 +98,7 @@ public class NcdcTotalSortJob extends AbstractJob {
 
         // Add to DistributedCache
         String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
-        System.out.println("*** partitionFile = " + partitionFile);
+        logger.debug("*** partitionFile = " + partitionFile);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
 
