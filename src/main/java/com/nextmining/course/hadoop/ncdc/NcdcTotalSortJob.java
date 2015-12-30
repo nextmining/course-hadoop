@@ -9,7 +9,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -72,10 +71,10 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcTotalSortMapper.class);
         job.setReducerClass(NcdcTotalSortReducer.class);
-        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
+        //FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
@@ -94,11 +93,9 @@ public class NcdcTotalSortJob extends AbstractJob {
         InputSampler.writePartitionFile(job, sampler);
 
         // Add to DistributedCache
-        /*
         String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
-        */
 
         return job.waitForCompletion(true) ? 0 : 1;
     }
