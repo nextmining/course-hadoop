@@ -65,13 +65,13 @@ public class NcdcTotalSortJob extends AbstractJob {
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(NcdcTotalSortJob.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcTotalSortMapper.class);
         job.setReducerClass(NcdcTotalSortReducer.class);
-        //job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
@@ -129,7 +129,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     /**
      * Mapper.
      */
-    public static class NcdcTotalSortMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+    public static class NcdcTotalSortMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
 
         private NcdcRecordParser parser = new NcdcRecordParser();
 
@@ -143,7 +143,7 @@ public class NcdcTotalSortJob extends AbstractJob {
                 String year = parser.getYear();
                 int airTemperature = parser.getAirTemperature();
 
-                context.write(new IntWritable(airTemperature), new Text(year + "\t" + airTemperature));
+                context.write(new LongWritable(airTemperature), new Text(year + "\t" + airTemperature));
             }
             else if (parser.isMalformedTemperature()) {
                 System.err.println("Ignoring possibly corrupt input: " + value);
@@ -158,9 +158,9 @@ public class NcdcTotalSortJob extends AbstractJob {
     /**
      * Reducer.
      */
-    public static class NcdcTotalSortReducer extends Reducer<IntWritable, Text, Text, NullWritable> {
+    public static class NcdcTotalSortReducer extends Reducer<LongWritable, Text, Text, NullWritable> {
 
-        public void reduce(IntWritable key, Iterable<Text> values, Context context)
+        public void reduce(LongWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
 
             for (Text val : values) {
