@@ -83,8 +83,8 @@ public class NcdcTotalSortJob extends AbstractJob {
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
         int maximumNumberOfSplits = 5;
-        InputSampler.Sampler<IntWritable, Text> sampler =
-                new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
+        InputSampler.Sampler<LongWritable, Text> sampler =
+                new InputSampler.RandomSampler<LongWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
 
         InputSampler.writePartitionFile(job, sampler);
 
