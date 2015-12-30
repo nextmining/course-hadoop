@@ -67,8 +67,6 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setJarByClass(NcdcTotalSortJob.class);
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(Text.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(NullWritable.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 

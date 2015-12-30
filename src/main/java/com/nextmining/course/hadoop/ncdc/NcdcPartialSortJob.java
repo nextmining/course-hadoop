@@ -62,7 +62,7 @@ public class NcdcPartialSortJob extends AbstractJob {
         job.setJarByClass(NcdcPartialSortJob.class);
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(Text.class);
-        job.setOutputKeyClass(Text.class);
+        job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcPartialSortMapper.class);
         job.setReducerClass(NcdcPartialSortReducer.class);
