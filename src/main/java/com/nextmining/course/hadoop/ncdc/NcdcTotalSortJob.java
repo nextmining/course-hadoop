@@ -65,8 +65,8 @@ public class NcdcTotalSortJob extends AbstractJob {
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(NcdcTotalSortJob.class);
-        job.setMapOutputKeyClass(IntWritable.class);
-        job.setMapOutputValueClass(Text.class);
+        //job.setMapOutputKeyClass(IntWritable.class);
+        //job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcTotalSortMapper.class);
