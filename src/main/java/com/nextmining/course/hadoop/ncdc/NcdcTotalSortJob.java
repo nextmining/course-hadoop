@@ -74,7 +74,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        //FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
+        FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
