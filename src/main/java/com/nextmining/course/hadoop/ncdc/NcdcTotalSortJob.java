@@ -78,7 +78,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
-        job.setSortComparatorClass(SortKeyComparator.class);
+        job.setSortComparatorClass(KeyComparator.class);
 
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
@@ -99,9 +99,9 @@ public class NcdcTotalSortJob extends AbstractJob {
     /**
      * Comparator for sorting values by descending.
      */
-    public static class SortKeyComparator extends WritableComparator {
+    public static class KeyComparator extends WritableComparator {
 
-        protected SortKeyComparator() {
+        protected KeyComparator() {
             super(IntWritable.class, true);
         }
 
@@ -112,15 +112,14 @@ public class NcdcTotalSortJob extends AbstractJob {
         public int compare(WritableComparable a, WritableComparable b) {
             IntWritable o1 = (IntWritable) a;
             IntWritable o2 = (IntWritable) b;
-            if(o1.get() < o2.get()) {
+            if (o1.get() < o2.get()) {
                 return 1;
-            }else if(o1.get() > o2.get()) {
+            } else if(o1.get() > o2.get()) {
                 return -1;
-            }else {
+            } else {
                 return 0;
             }
         }
-
     }
 
     /**
