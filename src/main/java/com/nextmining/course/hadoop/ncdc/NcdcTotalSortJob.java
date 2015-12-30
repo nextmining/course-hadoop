@@ -78,7 +78,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
-        job.setSortComparatorClass(KeyComparator.class);
+        //job.setSortComparatorClass(KeyComparator.class);
 
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
