@@ -16,20 +16,15 @@ import org.apache.hadoop.mapreduce.lib.partition.TotalOrderPartitioner;
 import org.apache.hadoop.util.ToolRunner;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Total sort job.
- *
- * 참조:
- * https://pipiper.wordpress.com/2013/05/02/sorting-using-hadoop-totalorderpartitioner/
- * https://github.com/tomwhite/hadoop-book/blob/master/ch09-mr-features/src/main/java/SortByTemperatureUsingTotalOrderPartitioner.java
- *
+ * Partial sorting job.
+ **
  * @author Younggue Bae
  */
-public class NcdcTotalSortJob extends AbstractJob {
+public class NcdcPartialSortJob extends AbstractJob {
 
     private static final String JOB_NAME_PREFIX = "[ygbae]";
 
@@ -39,7 +34,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     }
 
     public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new NcdcTotalSortJob(), args);
+        int exitCode = ToolRunner.run(new NcdcPartialSortJob(), args);
         System.exit(exitCode);
     }
 
@@ -64,40 +59,20 @@ public class NcdcTotalSortJob extends AbstractJob {
 
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
-        job.setJarByClass(NcdcTotalSortJob.class);
+        job.setJarByClass(NcdcPartialSortJob.class);
         job.setMapOutputKeyClass(IntWritable.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
-        //job.setMapperClass(NcdcTotalSortMapper.class);
-        //job.setReducerClass(NcdcTotalSortReducer.class);
+        job.setMapperClass(NcdcPartialSortMapper.class);
+        job.setReducerClass(NcdcPartialSortReducer.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        job.setPartitionerClass(TotalOrderPartitioner.class);
-        //job.setSortComparatorClass(KeyComparator.class);
-
-        Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
-        Path partitionFile = new Path(inputDir, "_partition");
-        TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
-
-        double uniformProbability = 0.1;
-        int maximumNumberOfSamples = 5000;
-        int maximumNumberOfSplits = 5;
-        InputSampler.Sampler<IntWritable, Text> sampler =
-                new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
-
-        InputSampler.writePartitionFile(job, sampler);
-
-        // Add to DistributedCache
-        /*
-        String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
-        URI partitionUri = new URI(partitionFile);
-        job.addCacheFile(partitionUri);
-        */
+        job.setSortComparatorClass(KeyComparator.class);
 
         return job.waitForCompletion(true) ? 0 : 1;
     }
@@ -131,7 +106,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     /**
      * Mapper.
      */
-    public static class NcdcTotalSortMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+    public static class NcdcPartialSortMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
 
         private NcdcRecordParser parser = new NcdcRecordParser();
 
@@ -160,7 +135,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     /**
      * Reducer.
      */
-    public static class NcdcTotalSortReducer extends Reducer<IntWritable, Text, Text, NullWritable> {
+    public static class NcdcPartialSortReducer extends Reducer<IntWritable, Text, Text, NullWritable> {
 
         public void reduce(IntWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {

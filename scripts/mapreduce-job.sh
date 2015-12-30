@@ -36,6 +36,19 @@ word_count()
 # NCDC데이터에서 연도별 기온 데이터를 기온기준으로 내림차순으로 전체 정렬을 한다.
 #
 #######################################
+partial_sort_ncdc()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=3
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcPartialSortJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+		--input "${input}" \
+		--output "${output}";
+}
 total_sort_ncdc()
 {
 	local input=$1
@@ -60,6 +73,10 @@ total_sort_ncdc()
 
 run_word_count() {
 	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
+}
+
+run_partial_sort_ncdc() {
+    partial_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
 }
 
 run_total_sort_ncdc() {
