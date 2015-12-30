@@ -72,7 +72,7 @@ public class NcdcTotalSortJob extends AbstractJob {
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
 
-        Path partitionFile = new Path(outputPath, "_partition");
+        Path partitionFile = new Path("/user/lineplus/ygbae/ncdc/total_sort_partition", "_partition");
         TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
 
         double uniformProbability = 0.1;
