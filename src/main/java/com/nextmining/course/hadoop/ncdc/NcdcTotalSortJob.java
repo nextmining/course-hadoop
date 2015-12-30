@@ -102,7 +102,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     public static class KeyComparator extends WritableComparator {
 
         protected KeyComparator() {
-            super(IntWritable.class, true);
+            super(LongWritable.class, true);
         }
 
         /**
@@ -110,8 +110,8 @@ public class NcdcTotalSortJob extends AbstractJob {
          */
         @Override
         public int compare(WritableComparable a, WritableComparable b) {
-            IntWritable o1 = (IntWritable) a;
-            IntWritable o2 = (IntWritable) b;
+            LongWritable o1 = (LongWritable) a;
+            LongWritable o2 = (LongWritable) b;
             if (o1.get() < o2.get()) {
                 return 1;
             } else if(o1.get() > o2.get()) {
