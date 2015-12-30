@@ -143,6 +143,7 @@ public class NcdcTotalSortJob extends AbstractJob {
 
                 context.write(new IntWritable(airTemperature), new Text(year + "\t" + airTemperature));
             }
+            /*
             else if (parser.isMalformedTemperature()) {
                 System.err.println("Ignoring possibly corrupt input: " + value);
                 context.getCounter(Temperature.MALFORMED).increment(1);
@@ -150,6 +151,7 @@ public class NcdcTotalSortJob extends AbstractJob {
             else if (parser.isMissingTemperature()) {
                 context.getCounter(Temperature.MISSING).increment(1);
             }
+            */
         }
     }
 
