@@ -78,7 +78,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         job.setPartitionerClass(TotalOrderPartitioner.class);
-        job.setSortComparatorClass(KeyComparator.class);
+        //job.setSortComparatorClass(KeyComparator.class);
 
         //Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
         //Path partitionFile = new Path(inputDir, "_partition");
