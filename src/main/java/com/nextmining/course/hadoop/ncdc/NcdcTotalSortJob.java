@@ -71,7 +71,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcTotalSortMapper.class);
         job.setReducerClass(NcdcTotalSortReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        //job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
