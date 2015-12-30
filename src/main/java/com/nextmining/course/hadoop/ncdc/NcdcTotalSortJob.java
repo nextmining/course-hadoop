@@ -82,7 +82,7 @@ public class NcdcTotalSortJob extends AbstractJob {
 
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
-        int maximumNumberOfSplits = 10;
+        int maximumNumberOfSplits = 5;
         InputSampler.Sampler<IntWritable, Text> sampler =
                 new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
 
@@ -102,7 +102,7 @@ public class NcdcTotalSortJob extends AbstractJob {
     public static class KeyComparator extends WritableComparator {
 
         protected KeyComparator() {
-            super(LongWritable.class, true);
+            super(IntWritable.class, true);
         }
 
         /**
@@ -110,8 +110,8 @@ public class NcdcTotalSortJob extends AbstractJob {
          */
         @Override
         public int compare(WritableComparable a, WritableComparable b) {
-            LongWritable o1 = (LongWritable) a;
-            LongWritable o2 = (LongWritable) b;
+            IntWritable o1 = (IntWritable) a;
+            IntWritable o2 = (IntWritable) b;
             if (o1.get() < o2.get()) {
                 return 1;
             } else if(o1.get() > o2.get()) {
