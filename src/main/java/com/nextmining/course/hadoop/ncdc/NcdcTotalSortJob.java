@@ -98,7 +98,7 @@ public class NcdcTotalSortJob extends AbstractJob {
 
         // Add to DistributedCache
         String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
-        logger.debug("*** partitionFile = " + partitionFile);
+        logger.info("*** partitionFile = " + partitionFile);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
 
