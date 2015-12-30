@@ -83,15 +83,17 @@ public class NcdcTotalSortJob extends AbstractJob {
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
         int maximumNumberOfSplits = 5;
-        InputSampler.Sampler<LongWritable, Text> sampler =
-                new InputSampler.RandomSampler<LongWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
+        InputSampler.Sampler<IntWritable, Text> sampler =
+                new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
 
         InputSampler.writePartitionFile(job, sampler);
 
         // Add to DistributedCache
+        /*
         String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
+        */
 
         return job.waitForCompletion(true) ? 0 : 1;
     }
