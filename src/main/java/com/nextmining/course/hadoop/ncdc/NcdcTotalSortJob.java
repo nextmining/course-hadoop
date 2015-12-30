@@ -4,6 +4,7 @@ import com.nextmining.hadoop.mapreduce.AbstractJob;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.lib.InputSampler;
 import org.apache.hadoop.mapreduce.Job;
@@ -62,7 +63,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(NcdcTotalSortJob.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
@@ -78,8 +79,8 @@ public class NcdcTotalSortJob extends AbstractJob {
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 5000;
         int maximumNumberOfSplits = 5;
-        InputSampler.Sampler<IntWritable, Text> sampler =
-                new InputSampler.RandomSampler<IntWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
+        InputSampler.Sampler<LongWritable, Text> sampler =
+                new InputSampler.RandomSampler<LongWritable, Text>(uniformProbability, maximumNumberOfSamples, maximumNumberOfSplits);
 
         InputSampler.writePartitionFile(job, sampler);
 
