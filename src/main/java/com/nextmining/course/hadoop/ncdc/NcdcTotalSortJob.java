@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -71,7 +72,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcTotalSortMapper.class);
         job.setReducerClass(NcdcTotalSortReducer.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
@@ -80,9 +81,9 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setPartitionerClass(TotalOrderPartitioner.class);
         //job.setSortComparatorClass(KeyComparator.class);
 
-        Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
-        Path partitionFile = new Path(inputDir, "_partition");
-        TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
+        //Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
+        //Path partitionFile = new Path(inputDir, "_partition");
+        //TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFile);
 
         double uniformProbability = 0.1;
         int maximumNumberOfSamples = 10000;
