@@ -53,7 +53,7 @@ total_sort_ncdc()
 {
 	local input=$1
 	local output=$2
-	local num_reducers=4
+	local num_reducers=1
 
 	$HADOOP fs -rmr ${output} >& /dev/null || true
 
