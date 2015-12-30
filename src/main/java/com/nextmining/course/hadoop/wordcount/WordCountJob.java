@@ -107,28 +107,28 @@ public class WordCountJob extends AbstractJob {
     /**
      * Reducer.
      */
-public static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-    private IntWritable result = new IntWritable();
+    public static class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+        private IntWritable result = new IntWritable();
 
-    /**
-     * 보통의 경우 setup 함수는 구현할 필요가 없으며,
-     * Job Driver로 부터 전달되는 파라미터 등을 Configuration 객체에서 꺼내서 사용할 필요가 있을 때 구현해 준다.
-     */
-    @Override
-    public void setup(Context context) throws IOException, InterruptedException {
-        super.setup(context);
-        //Configuration conf = context.getConfiguration();
-    }
-
-    public void reduce(Text key, Iterable<IntWritable> values, Context context)
-            throws IOException, InterruptedException {
-        int sum = 0;
-        for (IntWritable val : values) {
-            sum += val.get();
+        /**
+         * 보통의 경우 setup 함수는 구현할 필요가 없으며,
+         * Job Driver로 부터 전달되는 파라미터 등을 Configuration 객체에서 꺼내서 사용할 필요가 있을 때 구현해 준다.
+         */
+        @Override
+        public void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+            //Configuration conf = context.getConfiguration();
         }
-        result.set(sum);
-        context.write(key, result);
+
+        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            result.set(sum);
+            context.write(key, result);
+        }
     }
-}
 
 }

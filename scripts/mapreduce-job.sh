@@ -32,6 +32,23 @@ word_count()
 		--output "${output}";
 }
 
+#######################################
+# NCDC데이터에서 연도별 기온 데이터를 기온기준으로 내림차순으로 전체 정렬을 한다.
+#
+#######################################
+total_sort_ncdc()
+{
+	local input=$1
+	local output=$2
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcTotalSortJob \
+		--input "${input}" \
+		--output "${output}";
+}
+
+
 
 ##################################
 #
@@ -40,7 +57,11 @@ word_count()
 ##################################
 
 run_word_count() {
-	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count" "3"
+	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
+}
+
+run_total_sort_ncdc() {
+    total_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
 }
 
 CMD=$1
