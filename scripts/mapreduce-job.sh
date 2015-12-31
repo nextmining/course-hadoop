@@ -78,8 +78,24 @@ secondary_sort_ncdc()
 		--output "${output}";
 }
 
+#######################################
+# NCDC데이터에서 기상청 이름을 조인한다.
+#
+#######################################
+join_ncdc()
+{
+	local inputNcdc=$1
+	local inputStation=$2
+	local output=$3
+	local num_reducers=3
 
+	$HADOOP fs -rmr ${output} >& /dev/null || true
 
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcJoinJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+		--input "${input}" \
+		--output "${output}";
+}
 
 ##################################
 #
@@ -101,6 +117,10 @@ run_total_sort_ncdc() {
 
 run_secondary_sort_ncdc() {
     secondary_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
+}
+
+run_join_ncdc() {
+    join_ncdc "/coll/input/ncdc/all" "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
 }
 
 CMD=$1
