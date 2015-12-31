@@ -136,6 +136,26 @@ ncdc_max_temperature_by_year()
 		--output "${output}";
 }
 
+#######################################
+# NCDC데이터에서 연도별/기상청별 최고기온을 분석해 보자.
+#
+#######################################
+ncdc_max_temperature_by_year_station()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=2
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcMaxTemperatureByYearStationJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
+		--input "${input}" \
+		--output "${output}";
+}
+
+
 ##################################
 #
 # Main
@@ -168,6 +188,10 @@ run_ncdc_station_name() {
 
 run_ncdc_max_temperature_by_year() {
     ncdc_max_temperature_by_year "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year"
+}
+
+run_ncdc_max_temperature_by_year_station() {
+    ncdc_max_temperature_by_year_station "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station"
 }
 
 CMD=$1

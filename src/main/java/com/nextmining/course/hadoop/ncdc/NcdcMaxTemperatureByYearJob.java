@@ -30,11 +30,6 @@ public class NcdcMaxTemperatureByYearJob extends AbstractJob {
 
     private static final String JOB_NAME_PREFIX = "[ygbae]";
 
-    enum Temperature {
-        MISSING,
-        MALFORMED
-    }
-
     public static void main(String[] args) throws Exception {
         int exitCode = ToolRunner.run(new NcdcMaxTemperatureByYearJob(), args);
         System.exit(exitCode);
