@@ -106,10 +106,12 @@ public class NcdcStationNameJob extends AbstractJob {
                 throws IOException, InterruptedException {
             parser.parse(value);
 
-            // Apply threshold
-            if (parser.getAirTemperature() >= minTemperature) {
-                context.write(new TextPairWritable(parser.getStationId(), parser.getYear()),
-                        new IntWritable(parser.getAirTemperature()));
+            if (parser.isValidTemperature()) {
+                // Apply threshold
+                if (parser.getAirTemperature() >= minTemperature) {
+                    context.write(new TextPairWritable(parser.getStationId(), parser.getYear()),
+                            new IntWritable(parser.getAirTemperature()));
+                }
             }
         }
     }

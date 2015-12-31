@@ -36,7 +36,7 @@ word_count()
 # NCDC데이터에서 연도별 기온 데이터를 기온기준으로 내림차순으로 전체 정렬을 한다.
 #
 #######################################
-partial_sort_ncdc()
+ncdc_partial_sort()
 {
 	local input=$1
 	local output=$2
@@ -50,7 +50,7 @@ partial_sort_ncdc()
 		--output "${output}";
 }
 
-total_sort_ncdc()
+ncdc_total_sort()
 {
 	local input=$1
 	local output=$2
@@ -64,7 +64,7 @@ total_sort_ncdc()
 		--output "${output}";
 }
 
-secondary_sort_ncdc()
+ncdc_secondary_sort()
 {
 	local input=$1
 	local output=$2
@@ -82,7 +82,7 @@ secondary_sort_ncdc()
 # NCDC데이터에서 기상청 이름을 조인한다.
 #
 #######################################
-join_ncdc()
+ncdc_join()
 {
 	local inputNcdc=$1
 	local inputStation=$2
@@ -102,7 +102,7 @@ join_ncdc()
 # NCDC데이터에서 분산캐시를 이용해서 기상청 이름을 입력한다.
 #
 #######################################
-station_name_ncdc()
+ncdc_station_name()
 {
 	local input=$1
 	local output=$2
@@ -118,6 +118,23 @@ station_name_ncdc()
 		--minTemperature "0";
 }
 
+#######################################
+# NCDC데이터에서 연도별 최고기온을 분석해 보자.
+#
+#######################################
+ncdc_max_temperature_by_year()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=1
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcMaxTemperatureByYearJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+		--input "${input}" \
+		--output "${output}";
+}
 
 ##################################
 #
@@ -129,24 +146,28 @@ run_word_count() {
 	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
 }
 
-run_partial_sort_ncdc() {
-    partial_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
+run_ncdc_partial_sort() {
+    ncdc_partial_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
 }
 
-run_total_sort_ncdc() {
-    total_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
+run_ncdc_total_sort() {
+    ncdc_total_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
 }
 
-run_secondary_sort_ncdc() {
-    secondary_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
+run_ncdc_secondary_sort() {
+    ncdc_secondary_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
 }
 
-run_join_ncdc() {
-    join_ncdc "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
+run_ncdc_join() {
+    ncdc_join "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
 }
 
-run_station_name_ncdc() {
-    station_name_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
+run_ncdc_station_name() {
+    ncdc_station_name "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
+}
+
+run_ncdc_max_temperature_by_year() {
+    ncdc_max_temperature_by_year "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year"
 }
 
 CMD=$1
