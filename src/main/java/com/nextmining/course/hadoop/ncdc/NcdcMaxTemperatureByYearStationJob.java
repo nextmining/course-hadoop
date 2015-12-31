@@ -162,12 +162,12 @@ public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
                 throws IOException, InterruptedException {
 
             String year = key.getFirst().toString();
-            String stationId = key.getSecond().toString();
-
-            String stationName = stationNames.get(stationId);
 
             int maxValue = Integer.MIN_VALUE;
             for (IntWritable val : values) {
+                String stationId = key.getSecond().toString();
+                String stationName = stationNames.get(stationId);
+
                 maxValue = Math.max(maxValue, val.get());
                 context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
             }
