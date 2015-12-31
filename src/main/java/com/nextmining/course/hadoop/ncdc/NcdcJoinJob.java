@@ -112,7 +112,7 @@ public class NcdcJoinJob extends AbstractJob {
     /**
      * JoinStationMapper
      */
-    public class JoinStationMapper extends Mapper<LongWritable, Text, TextPairWritable, Text> {
+    public static class JoinStationMapper extends Mapper<LongWritable, Text, TextPairWritable, Text> {
         private NcdcStationMetadataParser parser = new NcdcStationMetadataParser();
 
         @Override
