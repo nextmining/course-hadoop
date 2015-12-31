@@ -169,9 +169,10 @@ public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
             int maxValue = Integer.MIN_VALUE;
             for (IntWritable val : values) {
                 maxValue = Math.max(maxValue, val.get());
+                context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
             }
-            context.write(new Text(year + "\t" + stationId + "\t" + stationName),
-                    new IntWritable(maxValue));
+            //context.write(new Text(year + "\t" + stationId + "\t" + stationName),
+            //        new IntWritable(maxValue));
         }
     }
 
