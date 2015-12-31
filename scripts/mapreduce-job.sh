@@ -121,7 +121,7 @@ run_secondary_sort_ncdc() {
 }
 
 run_join_ncdc() {
-    join_ncdc "/coll/input/ncdc/all" "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
+    join_ncdc "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
 }
 
 CMD=$1
