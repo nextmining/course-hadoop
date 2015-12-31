@@ -49,6 +49,7 @@ partial_sort_ncdc()
 		--input "${input}" \
 		--output "${output}";
 }
+
 total_sort_ncdc()
 {
 	local input=$1
@@ -62,6 +63,21 @@ total_sort_ncdc()
 		--input "${input}" \
 		--output "${output}";
 }
+
+secondary_sort_ncdc()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=3
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcSecondarySortJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+		--input "${input}" \
+		--output "${output}";
+}
+
 
 
 
@@ -81,6 +97,10 @@ run_partial_sort_ncdc() {
 
 run_total_sort_ncdc() {
     total_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
+}
+
+run_secondary_sort_ncdc() {
+    secondary_sort_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
 }
 
 CMD=$1
