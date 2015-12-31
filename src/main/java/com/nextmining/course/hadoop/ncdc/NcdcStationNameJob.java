@@ -60,7 +60,6 @@ public class NcdcStationNameJob extends AbstractJob {
 
         // input path
         Path inputPath = new Path(getOption("input"));
-        Path inputStationPath = new Path(getOption("inputStation"));
 
         // output path
         Path outputPath = new Path(getOption("output"));
