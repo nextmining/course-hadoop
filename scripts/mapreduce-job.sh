@@ -148,6 +148,7 @@ run_join_ncdc() {
 run_station_name_ncdc() {
     station_name_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
 }
+
 CMD=$1
 shift
 $CMD $*
