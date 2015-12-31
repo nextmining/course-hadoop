@@ -134,8 +134,8 @@ public class NcdcJoinJob extends AbstractJob {
         protected void reduce(TextPairWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
             Iterator<Text> iter = values.iterator();
-            Text stationName = new Text(iter.next());
-            while (iter.hasNext()) {
+            Text stationName = new Text(iter.next());   // JoinStationMapper를 통해서 기상청 이름이 맨 먼저 들어오기 때문에 기상청 이름을 저장해 놓는다.
+            while (iter.hasNext()) {    // 두번째 데이터 부터는 JoinRecordMapper를 통해서 기온 기록 데이터가 들어온다.
                 Text record = iter.next();
                 Text outValue = new Text(stationName.toString() + "\t" + record.toString());
                 context.write(key.getFirst(), outValue);
