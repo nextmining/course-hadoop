@@ -98,6 +98,27 @@ join_ncdc()
 		--output "${output}";
 }
 
+#######################################
+# NCDC데이터에서 분산캐시를 이용해서 기상청 이름을 입력한다.
+#
+#######################################
+station_name_ncdc()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=3
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcStationNameJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
+		--input "${input}" \
+		--output "${output}" \
+		--minTemperature "1";
+}
+
+
 ##################################
 #
 # Main
@@ -124,6 +145,9 @@ run_join_ncdc() {
     join_ncdc "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
 }
 
+run_station_name_ncdc() {
+    station_name_ncdc "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
+}
 CMD=$1
 shift
 $CMD $*
