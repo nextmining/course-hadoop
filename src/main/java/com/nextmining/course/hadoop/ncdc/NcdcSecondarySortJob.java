@@ -65,8 +65,8 @@ public class NcdcSecondarySortJob extends AbstractJob {
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(NcdcTotalSortJob.class);
         job.setMapOutputKeyClass(IntPairWritable.class);
-        job.setMapOutputValueClass(NullWritable.class);
-        job.setOutputKeyClass(IntPairWritable.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(NullWritable.class);
         job.setMapperClass(NcdcSecondarySortMapper.class);
         job.setReducerClass(NcdcSecondarySortReducer.class);
@@ -134,7 +134,7 @@ public class NcdcSecondarySortJob extends AbstractJob {
      * Mapper.
      */
     public static class NcdcSecondarySortMapper
-            extends Mapper<LongWritable, Text, IntPairWritable, NullWritable> {
+            extends Mapper<LongWritable, Text, IntPairWritable, Text> {
 
         private NcdcRecordParser parser = new NcdcRecordParser();
 
@@ -144,7 +144,7 @@ public class NcdcSecondarySortJob extends AbstractJob {
             parser.parse(value);
             if (parser.isValidTemperature()) {
                 context.write(new IntPairWritable(parser.getYearInt(), parser.getAirTemperature()),
-                        NullWritable.get());
+                        new Text(parser.getYearInt() + "\t" + parser.getAirTemperature()));
             }
         }
     }
@@ -153,12 +153,19 @@ public class NcdcSecondarySortJob extends AbstractJob {
      * Reducer.
      */
     public static class NcdcSecondarySortReducer
-            extends Reducer<IntPairWritable, NullWritable, IntPairWritable, NullWritable> {
+            extends Reducer<IntPairWritable, Text, Text, NullWritable> {
 
         @Override
-        protected void reduce(IntPairWritable key, Iterable<NullWritable> values, Context context)
+        protected void reduce(IntPairWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
-            context.write(key, NullWritable.get());
+            /**
+             * For max temperature by year
+             */
+            //context.write(new Text(key.getFirst() + "\t" + key.getSecond()), NullWritable.get());
+
+            for (Text val : values) {
+                context.write(val, NullWritable.get());
+            }
         }
     }
 
