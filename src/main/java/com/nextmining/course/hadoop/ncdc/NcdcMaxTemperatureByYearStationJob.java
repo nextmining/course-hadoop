@@ -88,10 +88,10 @@ public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
      * Partitioner.
      */
     public static class KeyPartitioner
-            extends Partitioner<TextPairWritable, Text> {
+            extends Partitioner<TextPairWritable, IntWritable> {
 
         @Override
-        public int getPartition(TextPairWritable key, Text value, int numPartitions) {
+        public int getPartition(TextPairWritable key, IntWritable value, int numPartitions) {
             return (key.getFirst().hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
