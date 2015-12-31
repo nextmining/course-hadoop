@@ -65,7 +65,8 @@ public class NcdcStationNameJob extends AbstractJob {
         Path outputPath = new Path(getOption("output"));
 
         Configuration conf = getConf();
-        conf.getInt("minTemperature", Integer.parseInt(getOption("minTemperature")));
+        conf.setInt("minTemperature", Integer.parseInt(getOption("minTemperature")));
+        logger.info("*** minTemperature = " + getOption("minTemperature"));
 
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());

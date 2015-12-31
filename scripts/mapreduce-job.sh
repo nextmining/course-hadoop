@@ -115,7 +115,7 @@ station_name_ncdc()
 	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
 		--input "${input}" \
 		--output "${output}" \
-		--minTemperature "1";
+		--minTemperature "0";
 }
 
 
