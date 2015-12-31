@@ -93,7 +93,8 @@ join_ncdc()
 
 	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcJoinJob \
 	    -D mapreduce.job.reduces=${num_reducers} \
-		--input "${input}" \
+		--inputNcdc "${inputNcdc}" \
+		--inputStation "${inputStation}" \
 		--output "${output}";
 }
 
