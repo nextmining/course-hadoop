@@ -157,24 +157,92 @@ public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
             return result;
         }
 
+        /**
+         * Just for testing.
+         */
+        /*
         @Override
         protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
 
             String year = key.getFirst().toString();
-            String stationId = new String(key.getSecond().toString());
+
+            //[주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
+            // 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
+            // 원하는 station id를 가져올 수 있다.
+            String stationId = key.getSecond().toString();
             String stationName = stationNames.get(stationId);
 
             int maxValue = Integer.MIN_VALUE;
             for (IntWritable val : values) {
-                //String stationId = key.getSecond().toString();
-                //String stationName = stationNames.get(stationId);
-
-                maxValue = Math.max(maxValue, val.get());
                 context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
             }
-            //context.write(new Text(year + "\t" + stationId + "\t" + stationName),
-            //        new IntWritable(maxValue));
+        }
+        */
+
+        /**
+         * Just for testing.
+         */
+        /*
+        @Override
+        protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
+
+            String year = key.getFirst().toString();
+
+            //[주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
+            // 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
+            // 원하는 station id를 가져올 수 있다.
+            //String stationId = key.getSecond().toString();
+            //String stationName = stationNames.get(stationId);
+
+            int maxValue = Integer.MIN_VALUE;
+            for (IntWritable val : values) {
+                String stationId = key.getSecond().toString();
+                String stationName = stationNames.get(stationId);
+                context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
+            }
+        }
+        */
+
+        @Override
+        protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
+
+            String year = key.getFirst().toString();
+
+            /**
+             * [주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
+             * 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
+             * 원하는 station id를 가져올 수 있다.
+             */
+            //String stationId = key.getSecond().toString();
+            //String stationName = stationNames.get(stationId);
+
+            int maxValue = Integer.MIN_VALUE;
+            String prevStationId = null;
+            String prevStationName = null;
+            for (IntWritable val : values) {
+                String stationId = key.getSecond().toString();
+                String stationName = stationNames.get(stationId);
+
+                if (prevStationId == null || prevStationId.equals(stationId)) {
+                    maxValue = Math.max(maxValue, val.get());
+                }
+                else {
+                    context.write(new Text(year + "\t" + prevStationId + "\t" + prevStationName),
+                            new IntWritable(maxValue));
+                    maxValue = Integer.MIN_VALUE;
+                }
+
+                prevStationId = stationId;
+                prevStationName = stationName;
+            }
+
+            if (prevStationId != null) {
+                context.write(new Text(year + "\t" + prevStationId + "\t" + prevStationName),
+                        new IntWritable(maxValue));
+            }
         }
     }
 
