@@ -87,10 +87,10 @@ public class NcdcSecondarySortJob extends AbstractJob {
      * Partitioner.
      */
     public static class FirstPartitioner
-            extends Partitioner<IntPairWritable, NullWritable> {
+            extends Partitioner<IntPairWritable, Text> {
 
         @Override
-        public int getPartition(IntPairWritable key, NullWritable value, int numPartitions) {
+        public int getPartition(IntPairWritable key, Text value, int numPartitions) {
             // multiply by 127 to perform some mixing
             return Math.abs(key.getFirst() * 127) % numPartitions;
         }
