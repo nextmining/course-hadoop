@@ -210,7 +210,7 @@ run_ncdc_max_temperature_by_year_station() {
 }
 
 run_ncdc_max_temperature_by_year_station1() {
-    ncdc_max_temperature_by_year_station1 "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station"
+    ncdc_max_temperature_by_year_station1 "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station1"
 }
 
 CMD=$1
