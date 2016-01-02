@@ -1,14 +1,10 @@
 package com.nextmining.course.hadoop.linereview;
 
-import com.nextmining.course.hadoop.ncdc.NcdcRecordParser;
-import com.nextmining.course.hadoop.ncdc.NcdcStationMetadataParser;
-import com.nextmining.hadoop.io.TextPairWritable;
+import com.nextmining.hadoop.io.IntPairWritable;
 import com.nextmining.hadoop.mapreduce.AbstractJob;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
@@ -21,17 +17,12 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
- * Max temperature by year and station job.
+ * Secondary sort job for LINE app store review analysis result.
  *
  * @author Younggue Bae
  */
@@ -68,14 +59,14 @@ public class LineReviewWordCountSortJob extends AbstractJob {
         Job job = Job.getInstance(conf);
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
         job.setJarByClass(LineReviewWordCountSortJob.class);
-        job.setMapOutputKeyClass(TextPairWritable.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputKeyClass(IntPairWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
-        job.setMapperClass(NcdcMaxTemperatureMapper.class);
-        job.setReducerClass(NcdcMaxTemperatureReducer.class);
+        job.setOutputValueClass(NullWritable.class);
+        job.setMapperClass(LineReviewWordCountSortMapper.class);
+        job.setReducerClass(LineReviewWordCountSortReducer.class);
         job.setPartitionerClass(KeyPartitioner.class);    // Partitioner
-        job.setGroupingComparatorClass(TextPairWritable.FirstComparator.class);  // Group comparator
+        job.setGroupingComparatorClass(KeyComparator.class);  // Group comparator
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
@@ -90,160 +81,81 @@ public class LineReviewWordCountSortJob extends AbstractJob {
      * Partitioner.
      */
     public static class KeyPartitioner
-            extends Partitioner<TextPairWritable, IntWritable> {
+            extends Partitioner<IntPairWritable, Text> {
 
         @Override
-        public int getPartition(TextPairWritable key, IntWritable value, int numPartitions) {
-            return (key.getFirst().hashCode() & Integer.MAX_VALUE) % numPartitions;
+        public int getPartition(IntPairWritable key, Text value, int numPartitions) {
+            // multiply by 127 to perform some mixing
+            return Math.abs(key.getFirst() * 127) % numPartitions;
+        }
+    }
+
+    /**
+     * KeyComparator
+     */
+    public static class KeyComparator extends WritableComparator {
+        protected KeyComparator() {
+            super(IntPairWritable.class, true);
+        }
+        @Override
+        public int compare(WritableComparable w1, WritableComparable w2) {
+            IntPairWritable ip1 = (IntPairWritable) w1;
+            IntPairWritable ip2 = (IntPairWritable) w2;
+            int cmp = IntPairWritable.compare(ip1.getFirst(), ip2.getFirst());
+            if (cmp != 0) {
+                return cmp;
+            }
+            return -IntPairWritable.compare(ip1.getSecond(), ip2.getSecond()); //descending
+        }
+    }
+
+    /**
+     * GroupComparator.
+     */
+    public static class GroupComparator extends WritableComparator {
+        protected GroupComparator() {
+            super(IntPairWritable.class, true);
+        }
+        @Override
+        public int compare(WritableComparable w1, WritableComparable w2) {
+            IntPairWritable ip1 = (IntPairWritable) w1;
+            IntPairWritable ip2 = (IntPairWritable) w2;
+            return IntPairWritable.compare(ip1.getFirst(), ip2.getFirst());
         }
     }
 
     /**
      * Mapper.
      */
-    public static class NcdcMaxTemperatureMapper
-            extends Mapper<LongWritable, Text, TextPairWritable, IntWritable> {
-
-        private NcdcRecordParser parser = new NcdcRecordParser();
+    public static class LineReviewWordCountSortMapper
+            extends Mapper<LongWritable, Text, IntPairWritable, Text> {
 
         @Override
         protected void map(LongWritable key, Text value,
                            Context context) throws IOException, InterruptedException {
-            parser.parse(value);
-            if (parser.isValidTemperature()) {
-                context.write(new TextPairWritable(parser.getYear(), parser.getStationId()),
-                        new IntWritable(parser.getAirTemperature()));
-            }
-        }
+            String record = value.toString();
+            String[] field = record.split("\t");
+            int rating = Integer.parseInt(field[0]);
+            String word = field[1];
+            int count = Integer.parseInt(field[3]);
+
+            context.write(new IntPairWritable(rating, count),
+                    new Text(rating + "\t" + word + "\t" + count));
+    }
     }
 
     /**
      * Reducer.
      */
-    public static class NcdcMaxTemperatureReducer
-            extends Reducer<TextPairWritable, IntWritable, Text, IntWritable> {
-
-        private NcdcStationMetadataParser parser = new NcdcStationMetadataParser();
-        private Map<String, String> stationNames = new HashMap<String, String>();
+    public static class LineReviewWordCountSortReducer
+            extends Reducer<IntPairWritable, Text, Text, NullWritable> {
 
         @Override
-        public void setup(Context context) throws IOException, InterruptedException {
-            super.setup(context);
-            //Configuration conf = context.getConfiguration();
-
-            this.stationNames = loadStationNames("stations-fixed-width.txt");
-        }
-
-        private Map<String, String> loadStationNames(String stationFile) throws IOException {
-            Map<String, String> result = new HashMap<String, String>();
-
-            BufferedReader in =
-                    new BufferedReader(new InputStreamReader(new FileInputStream(stationFile), "utf-8"));
-
-            System.err.println("Station:");
-            String line;
-            while ((line = in.readLine()) != null) {
-                // right trim
-                line = line.replaceAll("\\s+$", "");
-                if (!line.equals("")) {
-                    parser.parse(line);
-                    String stationId = parser.getStationId();
-                    String stationName = parser.getStationName();
-                    System.err.println(stationId + "\t" + stationName);
-                    result.put(stationId, stationName);
-                }
-            }
-
-            in.close();
-
-            return result;
-        }
-
-        /**
-         * Just for testing.
-         */
-        /*
-        @Override
-        protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
+        protected void reduce(IntPairWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
 
-            String year = key.getFirst().toString();
-
-            //[주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
-            // 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
-            // 원하는 station id를 가져올 수 있다.
-            String stationId = key.getSecond().toString();
-            String stationName = stationNames.get(stationId);
-
-            int maxValue = Integer.MIN_VALUE;
-            for (IntWritable val : values) {
-                context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
-            }
-        }
-        */
-
-        /**
-         * Just for testing.
-         */
-        /*
-        @Override
-        protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
-
-            String year = key.getFirst().toString();
-
-            //[주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
-            // 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
-            // 원하는 station id를 가져올 수 있다.
-            //String stationId = key.getSecond().toString();
-            //String stationName = stationNames.get(stationId);
-
-            int maxValue = Integer.MIN_VALUE;
-            for (IntWritable val : values) {
-                String stationId = key.getSecond().toString();
-                String stationName = stationNames.get(stationId);
-                context.write(new Text(year + "\t" + stationId + "\t" + stationName), val);
-            }
-        }
-        */
-
-        @Override
-        protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
-
-            String year = key.getFirst().toString();
-
-            /**
-             * [주의]여기서 TextPairWritable의 2번째 키인 station id를 꺼내면, 맨 처음으로 담긴 station id만 가져온다.
-             * 따라서 station id별로 최대기온을 구하기 위해서 아래 for문 loop내에서 TextPairWritable의 2번째 키인 station id를 꺼내면
-             * 원하는 station id를 가져올 수 있다.
-             */
-            //String stationId = key.getSecond().toString();
-            //String stationName = stationNames.get(stationId);
-
-            int maxValue = Integer.MIN_VALUE;
-            String prevStationId = null;
-            String prevStationName = null;
-            for (IntWritable val : values) {
-                String stationId = key.getSecond().toString();
-                String stationName = stationNames.get(stationId);
-
-                if (prevStationId == null || prevStationId.equals(stationId)) {
-                    maxValue = Math.max(maxValue, val.get());
-                }
-                else {
-                    context.write(new Text(year + "\t" + prevStationId + "\t" + prevStationName),
-                            new IntWritable(maxValue));
-                    maxValue = Integer.MIN_VALUE;
-                }
-
-                prevStationId = stationId;
-                prevStationName = stationName;
-            }
-
-            if (prevStationId != null) {
-                context.write(new Text(year + "\t" + prevStationId + "\t" + prevStationName),
-                        new IntWritable(maxValue));
+            for (Text val : values) {
+                context.write(val, NullWritable.get());
             }
         }
     }
