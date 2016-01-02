@@ -111,9 +111,9 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                            Context context) throws IOException, InterruptedException {
             String jsonValue = value.toString();
 
-            int rate = this.getRate(jsonValue);
+            int rating = this.getRate(jsonValue);
             // 평점 정보가 없는 경우 skip 한다.
-            if (rate == 0) {
+            if (rating == 0) {
                 return;
             }
             String reviewText = this.getReviewText(jsonValue);
@@ -121,7 +121,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
             List<String> keywords = this.getKeywords(reviewText);
 
             for (String keyword : keywords) {
-                context.write(new TextPairWritable(String.valueOf(rate), reviewText), new IntWritable(1));
+                context.write(new TextPairWritable(String.valueOf(rating), keyword), new IntWritable(1));
             }
         }
 
@@ -165,8 +165,8 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                 };
                 Map<String, Object> data = jsonMapper.readValue(jsonText, typeRef);
 
-                if (data.get("rate") != null) {
-                    return (Integer) data.get("rate");
+                if (data.get("rating") != null) {
+                    return (Integer) data.get("rating");
                 }
             } catch (IOException e) {
                 System.err.println(e.getMessage());
@@ -234,7 +234,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
      */
     public static class LineReviewWordCountReducer
             extends Reducer<TextPairWritable, IntWritable, Text, IntWritable> {
-        
+
         @Override
         protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
