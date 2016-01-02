@@ -2,7 +2,6 @@ package com.nextmining.course.hadoop.linereview;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nextmining.course.hadoop.ncdc.NcdcStationMetadataParser;
 import com.nextmining.hadoop.io.TextPairWritable;
 import com.nextmining.hadoop.mapreduce.AbstractJob;
 import com.nextmining.nlp.NLPTools;
@@ -20,7 +19,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.mapreduce.task.reduce.ExceptionReporter;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,43 +234,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
      */
     public static class LineReviewWordCountReducer
             extends Reducer<TextPairWritable, IntWritable, Text, IntWritable> {
-
-        private NcdcStationMetadataParser parser = new NcdcStationMetadataParser();
-        private Map<String, String> stationNames = new HashMap<String, String>();
-
-        @Override
-        public void setup(Context context) throws IOException, InterruptedException {
-            super.setup(context);
-            //Configuration conf = context.getConfiguration();
-
-            this.stationNames = loadStationNames("stations-fixed-width.txt");
-        }
-
-        private Map<String, String> loadStationNames(String stationFile) throws IOException {
-            Map<String, String> result = new HashMap<String, String>();
-
-            BufferedReader in =
-                    new BufferedReader(new InputStreamReader(new FileInputStream(stationFile), "utf-8"));
-
-            System.err.println("Station:");
-            String line;
-            while ((line = in.readLine()) != null) {
-                // right trim
-                line = line.replaceAll("\\s+$", "");
-                if (!line.equals("")) {
-                    parser.parse(line);
-                    String stationId = parser.getStationId();
-                    String stationName = parser.getStationName();
-                    System.err.println(stationId + "\t" + stationName);
-                    result.put(stationId, stationName);
-                }
-            }
-
-            in.close();
-
-            return result;
-        }
-
+        
         @Override
         protected void reduce(TextPairWritable key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
