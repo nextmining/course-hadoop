@@ -137,11 +137,11 @@ public class LineReviewWordCountSortJob extends AbstractJob {
             String[] field = record.split("\t");
             int rating = Integer.parseInt(field[0]);
             String word = field[1];
-            int count = Integer.parseInt(field[3]);
+            int count = Integer.parseInt(field[2]);
 
             context.write(new IntPairWritable(rating, count),
                     new Text(rating + "\t" + word + "\t" + count));
-    }
+        }
     }
 
     /**
