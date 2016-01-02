@@ -66,7 +66,8 @@ public class LineReviewWordCountSortJob extends AbstractJob {
         job.setMapperClass(LineReviewWordCountSortMapper.class);
         job.setReducerClass(LineReviewWordCountSortReducer.class);
         job.setPartitionerClass(KeyPartitioner.class);    // Partitioner
-        job.setGroupingComparatorClass(KeyComparator.class);  // Group comparator
+        job.setSortComparatorClass(KeyComparator.class);    // Sort comparator
+        job.setGroupingComparatorClass(GroupComparator.class);  // Group comparator
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
