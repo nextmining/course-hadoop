@@ -2,6 +2,7 @@ the
 did
 done
 be
+been
 as
 are
 is
@@ -10,3 +11,12 @@ was
 were
 i
 do
+?
+have
+has
+had
+n't
+'s
+'m
+"
+'ve

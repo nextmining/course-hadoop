@@ -145,6 +145,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                 line = line.replaceAll("\\s+$", "");
                 if (!line.equals("")) {
                     stopwords.add(line.toLowerCase());
+                    System.err.println(line.toLowerCase());
                 }
             }
 
@@ -216,7 +217,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                 for (Token token : tokens) {
                     String word = token.getToken();
                     // 불용어 사전에 포함된 단어는 제외한다.
-                    if (word != null && !stopwords.contains(word)) {
+                    if (word != null && !stopwords.contains(word.toLowerCase())) {
                         // 소문자로 변환한 뒤 키워드리스트에 추가한다.
                         keywords.add(word.toLowerCase());
                     }
