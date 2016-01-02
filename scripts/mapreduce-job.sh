@@ -253,7 +253,7 @@ run_line_ios_review_word_count_sort() {
     line_ios_review_word_count_sort "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count" "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count_sort"
 }
 
-run_line_ios_review_word_count() {
+run_line_ios_review() {
     run_line_ios_review_word_count
     run_line_ios_review_word_count_sort
 }
