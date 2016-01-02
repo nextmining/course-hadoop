@@ -46,7 +46,10 @@ build_single_jar() {
 	cd ${CLASS_DIR}; jar xf ${PROJECT_HOME}/hadoop-libs/jackson-core-2.3.0.jar; cd ${PROJECT_HOME}
 	cd ${CLASS_DIR}; jar xf ${PROJECT_HOME}/hadoop-libs/jackson-annotations-2.3.0.jar; cd ${PROJECT_HOME}
 	cd ${CLASS_DIR}; jar xf ${PROJECT_HOME}/hadoop-libs/jackson-databind-2.3.0.jar; cd ${PROJECT_HOME}
+	cd ${CLASS_DIR}; jar xf ${PROJECT_HOME}/hadoop-libs/opennlp-maxent-3.0.2-incubating.jar; cd ${PROJECT_HOME}
+	cd ${CLASS_DIR}; jar xf ${PROJECT_HOME}/hadoop-libs/opennlp-tools-1.5.2-incubating.jar; cd ${PROJECT_HOME}
 	cd ${CLASS_DIR}; jar xf ${BUILD_LIBS_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.jar; cd ${PROJECT_HOME}
+
 	
 	# bundle every thing into a single jar
 	cd ${BUILD_LIBS_DIR}; jar cf ${PROJECT_NAME}-job.jar -C ${CLASS_DIR} .; cd ${PROJECT_HOME}

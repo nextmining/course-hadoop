@@ -137,7 +137,7 @@ ncdc_max_temperature_by_year()
 }
 
 #######################################
-# NCDC데이터에서 연도별/기상청별 최고기온을 분석해 보자.
+# NCDC데이터에서 연도별/기상청별 최고기온을 분석한다.
 #
 #######################################
 ncdc_max_temperature_by_year_station()
@@ -170,6 +170,38 @@ ncdc_max_temperature_by_year_station1()
 		--output "${output}";
 }
 
+#######################################
+# LINE 아이폰 앱스토어 사용자리뷰 데이터를 분석한다.
+#
+#######################################
+line_ios_review_word_count()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=10
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.linereview.LineReviewWordCountByRateJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+	    -files "${PROJECT_HOME}/dics/stopwords_en.txt#stopwords_en.txt" \
+		--input "${input}" \
+		--output "${output}";
+}
+
+line_ios_review_word_count_sort()
+{
+	local input=$1
+	local output=$2
+	local num_reducers=5
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.linereview.LineReviewWordCountSortJob \
+	    -D mapreduce.job.reduces=${num_reducers} \
+		--input "${input}" \
+		--output "${output}";
+}
 
 ##################################
 #
@@ -211,6 +243,19 @@ run_ncdc_max_temperature_by_year_station() {
 
 run_ncdc_max_temperature_by_year_station1() {
     ncdc_max_temperature_by_year_station1 "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station1"
+}
+
+run_line_ios_review_word_count() {
+    line_ios_review_word_count "/coll/line_ios_review/line_ios_review_us_20160101.txt" "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count"
+}
+
+run_line_ios_review_word_count_sort() {
+    line_ios_review_word_count_sort "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count" "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count_sort"
+}
+
+run_line_ios_review_word_count() {
+    run_line_ios_review_word_count
+    run_line_ios_review_word_count_sort
 }
 
 CMD=$1

@@ -44,19 +44,20 @@ public class WordCountJob extends AbstractJob {
 
         parseArguments(args);
 
-        // input path
+        // Input path
         String[] inputs = getOption("input").split(",");
         Set<Path> inputPaths = new HashSet<Path>();
         for (String input : inputs) {
             inputPaths.add(new Path(input));
         }
 
-        // output path
+        // Output path
         Path outputPath = new Path(getOption("output"));
 
         Configuration conf = getConf();
 
         Job job = Job.getInstance(conf);
+        // Job setting
         job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());   // 맵리듀스 잡 이름
         job.setJarByClass(WordCountJob.class);                          // 잡 드라이버 클래스명
         job.setMapOutputKeyClass(Text.class);                           // 매퍼 출력 key 데이터타입
@@ -68,7 +69,9 @@ public class WordCountJob extends AbstractJob {
         job.setInputFormatClass(TextInputFormat.class);                 // 입력데이터 포맷
         job.setOutputFormatClass(TextOutputFormat.class);               // 출력데이터 포맷
 
+        // Set input path
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
+        // Set output path
         FileOutputFormat.setOutputPath(job, outputPath);
 
         return job.waitForCompletion(true) ? 0 : 1;
