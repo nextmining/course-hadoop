@@ -20,6 +20,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.task.reduce.ExceptionReporter;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,10 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
             String jsonValue = value.toString();
 
             int rate = this.getRate(jsonValue);
+            // 평점 정보가 없는 경우 skip 한다.
+            if (rate == 0) {
+                return;
+            }
             String reviewText = this.getReviewText(jsonValue);
 
             List<String> keywords = this.getKeywords(reviewText);
@@ -162,9 +167,13 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                 };
                 Map<String, Object> data = jsonMapper.readValue(jsonText, typeRef);
 
-                return (Integer) data.get("rate");
+                if (data.get("rate") != null) {
+                    return (Integer) data.get("rate");
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
 
             return 0;
@@ -182,9 +191,13 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
                 };
                 Map<String, Object> data = jsonMapper.readValue(jsonText, typeRef);
 
-                return (String) data.get("text");
+                if (data.get("text") != null) {
+                    return (String) data.get("text");
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
 
             return "";
