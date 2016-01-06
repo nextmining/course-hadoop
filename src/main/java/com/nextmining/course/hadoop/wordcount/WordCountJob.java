@@ -57,17 +57,28 @@ public class WordCountJob extends AbstractJob {
         Configuration conf = getConf();
 
         Job job = Job.getInstance(conf);
-        // Job setting
-        job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());   // 맵리듀스 잡 이름
-        job.setJarByClass(WordCountJob.class);                          // 잡 드라이버 클래스명
-        job.setMapOutputKeyClass(Text.class);                           // 매퍼 출력 key 데이터타입
-        job.setMapOutputValueClass(IntWritable.class);                  // 매퍼 출력 value 데이터타입
-        job.setOutputKeyClass(Text.class);                              // 리듀서 출력 key 데이터타입
-        job.setOutputValueClass(IntWritable.class);                     // 리듀서 출력 value 데이터타입
-        job.setMapperClass(WordCountMapper.class);                      // 매퍼 클래스명
-        job.setReducerClass(WordCountReducer.class);                    // 리듀서 클래스명
-        job.setInputFormatClass(TextInputFormat.class);                 // 입력데이터 포맷
-        job.setOutputFormatClass(TextOutputFormat.class);               // 출력데이터 포맷
+
+        // --------------> START
+        /*
+         * --------------------------------------------------------------
+         * 아래에 맵리듀스 잡을 세팅하기 위한 코드를 작성하세요.
+         *
+         * job.setJobName();    // 맵리듀스 잡 이름
+         * job.setJarByClass(); // 잡 드라이버 클래스명
+         * job.setMapOutputKeyClass();  // 매퍼 출력 key 데이터타입
+         * job.setMapOutputValueClass();    // 매퍼 출력 value 데이터타입
+         * job.setOutputKeyClass(); // 리듀서 출력 key 데이터타입
+         * job.setOutputValueClass();   // 리듀서 출력 value 데이터타입
+         * job.setMapperClass();    // 매퍼 클래스명
+         * job.setReducerClass();   // 리듀서 클래스명
+         * job.setInputFormatClass();   // 입력데이터 포맷
+         * job.setOutputFormatClass();  // 출력데이터 포맷
+         * -------------------------------------------------------------
+         */
+
+        
+
+        // <-------------- END
 
         // Set input path
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
@@ -99,11 +110,19 @@ public class WordCountJob extends AbstractJob {
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
-            }
+            // --------------> START
+            /*
+             * --------------------------------------------------------------
+             * 맵 함수를 완성하세요.
+             * 입력으로 들어온 value 텍스트에서 공백을 구분자로 tokenize하여 word를 추출한다.
+             * 추출된 워드를 리듀서에서 카운트하기 위해 key, value를 출력한다.
+             * -------------------------------------------------------------
+             */
+
+
+
+
+            // <-------------- END
         }
     }
 
@@ -125,12 +144,21 @@ public class WordCountJob extends AbstractJob {
 
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
+            // --------------> START
+            /*
+             * --------------------------------------------------------------
+             * 리듀스 함수를 완성하세요.
+             * 입력으로 들어온 key(word), value(count)를 가지고 key별로 카운트를 합산한다.
+             * key별 합산된 key, value를 최종 출력한다.
+             * -------------------------------------------------------------
+             */
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
             }
             result.set(sum);
             context.write(key, result);
+            // <-------------- END
         }
     }
 
