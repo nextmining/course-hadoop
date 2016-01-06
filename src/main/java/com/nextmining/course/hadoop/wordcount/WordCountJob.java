@@ -76,7 +76,7 @@ public class WordCountJob extends AbstractJob {
          * -------------------------------------------------------------
          */
 
-        
+
 
         // <-------------- END
 
