@@ -85,6 +85,7 @@ public class WordCountJob extends AbstractJob {
         job.setReducerClass(WordCountReducer.class);                    // 리듀서 클래스명
         job.setInputFormatClass(TextInputFormat.class);                 // 입력데이터 포맷
         // <-------------- END
+        
 
         // Set input path
         FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
