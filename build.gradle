@@ -1,8 +1,27 @@
+buildscript {
+    ext {
+        scalaBinaryVersion = '2.10'
+        sparkVersion = '1.6.1'
+        //scalaVersion = '2.11.8'
+    }
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+plugins {
+    id 'scala'
+    // 의존성 있는 jar 파일들도 빌드시에 같이 jar파일로 묶기 위한 플러그인
+    id 'com.github.johnrengelman.shadow' version '1.2.1'
+}
+
 group 'com.nextmining'
-version '1.0.0'
+version '1.0.1'
 
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'scala'
 
 sourceCompatibility = 1.7
 
@@ -17,19 +36,66 @@ repositories {
     maven { url "http://opennlp.sourceforge.net/maven2" }
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+configurations {
+    provided
+    providedCompile
+}
 
-    compile("log4j:log4j:1.2.17")
-    compile("org.slf4j:slf4j-log4j12:1.6.6")
+sourceSets {
+    main.compileClasspath += configurations.provided
+    test.compileClasspath += configurations.provided
+    test.runtimeClasspath += configurations.provided
+
+    main {
+        scala {
+            srcDirs = ['src/main/scala']
+        }
+    }
+    test {
+        scala {
+            srcDirs = ['src/test/scala']
+        }
+    }
+}
+
+dependencies {
+    //----------------------------------------
+    // Hadoop client 라이브러리로 compile 단계에서만 필요하며 실제 build될 jar 파일에는 포함시키지 않는다.
+    provided("org.apache.hadoop:hadoop-client:2.6.0")
+    providedCompile("org.apache.hadoop:hadoop-client:2.6.0")
+    //----------------------------------------
+
+    //----------------------------------------
+    // nextmining에서 제공하는 hadoop관련 공통 라이브러리를 사용하기 위한 의존성 라이브러리들이다.
+    compile("com.google.guava:guava:14.0")
     compile("commons-cli:commons-cli:1.2")
+    //----------------------------------------
+
+    //----------------------------------------
+    // For spark
+    provided("org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}")
+    provided("org.apache.spark:spark-mllib_${scalaBinaryVersion}:${sparkVersion}")
+    providedCompile("org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}")
+    providedCompile("org.apache.spark:spark-mllib_${scalaBinaryVersion}:${sparkVersion}")
+    //----------------------------------------
+
+    //----------------------------------------
+    // For scala
+    //compile("org.scala-lang:scala-library:${scalaVersion}")
+    // Command Line Option parser
+    compile("com.github.scopt:scopt_${scalaBinaryVersion}:3.4.0")
+    //----------------------------------------
+
+    provided("log4j:log4j:1.2.17")
+    providedCompile("log4j:log4j:1.2.17")
+    provided("org.slf4j:slf4j-log4j12:1.6.6")
+    providedCompile("org.slf4j:slf4j-log4j12:1.6.6")
 
     compile('com.fasterxml.jackson.core:jackson-core:2.3.0')
     compile('com.fasterxml.jackson.core:jackson-annotations:2.3.0')
     compile('com.fasterxml.jackson.core:jackson-databind:2.3.0')
 
-    compile("org.apache.hadoop:hadoop-client:2.6.0")
-    compile("com.google.guava:guava:14.0")
-
     compile("org.apache.opennlp:opennlp-tools:1.5.2-incubating")
+
+    testCompile("junit:junit:+")
 }

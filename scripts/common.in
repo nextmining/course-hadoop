@@ -9,18 +9,18 @@ export JAVA_HOME=/usr/bin/java
 
 ################
 # 아래 MY_HOME 및 MY_HDFS_HOME를 자신의 작업 디렉토리에 맞게 변경해 주세요.
-MY_HOME=/home/lineplus/ygbae
-MY_HDFS_HOME=/user/lineplus/ygbae
+MY_HOME=/home/student/projects/ygbae
+MY_HDFS_HOME=/user/student/ygbae
 ################
 
 # For hadoop
 HADOOP_HOME=/usr/local/hadoop-2.6.0
-export HADOOP_CONF_DIR="/home/lineplus/hadoop-conf"
+export HADOOP_CONF_DIR="/home/student/tools/hadoop-conf"
 
 HADOOP="${HADOOP_HOME}/bin/hadoop --config $HADOOP_CONF_DIR"
 
 PROJECT_HOME=${MY_HOME}/course-hadoop
-JOB_JAR=${PROJECT_HOME}/build/libs/course-hadoop-job.jar
+JOB_JAR=${PROJECT_HOME}/build/libs/course-hadoop-1.0.1-all.jar
 cd ${PROJECT_HOME}
 
 SCRIPT_DIR=${PROJECT_HOME}/scripts

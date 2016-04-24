@@ -1,6 +1,7 @@
 package com.nextmining.course.hadoop.ncdc;
 
 import com.nextmining.hadoop.mapreduce.AbstractJob;
+import org.apache.commons.beanutils.converters.DateTimeConverter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;

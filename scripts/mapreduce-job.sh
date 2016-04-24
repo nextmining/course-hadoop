@@ -10,7 +10,7 @@ set -e -o pipefail
 #
 ##################################
 
-source /home/lineplus/ygbae/course-hadoop/scripts/common.in
+source /home/student/projects/ygbae/course-hadoop/scripts/common.in
 
 
 #######################################
@@ -210,43 +210,43 @@ line_ios_review_word_count_sort()
 ##################################
 
 run_word_count() {
-	word_count "/coll/input/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
+	word_count "/user/student/data/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
 }
 
 run_ncdc_partial_sort() {
-    ncdc_partial_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
+    ncdc_partial_sort "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
 }
 
 run_ncdc_total_sort() {
-    ncdc_total_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
+    ncdc_total_sort "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/total_sort"
 }
 
 run_ncdc_secondary_sort() {
-    ncdc_secondary_sort "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
+    ncdc_secondary_sort "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/secondary_sort"
 }
 
 run_ncdc_join() {
-    ncdc_join "/coll/input/ncdc/all" "/coll/input/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
+    ncdc_join "/user/student/data/ncdc/all" "/user/student/data/ncdc/metadata/stations-fixed-width.txt" "${MY_HDFS_HOME}/ncdc/join"
 }
 
 run_ncdc_station_name() {
-    ncdc_station_name "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
+    ncdc_station_name "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/station_name"
 }
 
 run_ncdc_max_temperature_by_year() {
-    ncdc_max_temperature_by_year "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year"
+    ncdc_max_temperature_by_year "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year"
 }
 
 run_ncdc_max_temperature_by_year_station() {
-    ncdc_max_temperature_by_year_station "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station"
+    ncdc_max_temperature_by_year_station "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station"
 }
 
 run_ncdc_max_temperature_by_year_station1() {
-    ncdc_max_temperature_by_year_station1 "/coll/input/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station1"
+    ncdc_max_temperature_by_year_station1 "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/max_by_year_station1"
 }
 
 run_line_ios_review_word_count() {
-    line_ios_review_word_count "/coll/line_ios_review/line_ios_review_us_20160101.txt" "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count"
+    line_ios_review_word_count "/user/student/data/line_ios_review/line_ios_review_us_20160101.txt" "${MY_HDFS_HOME}/line_ios_review/line_ios_review_us_word_count"
 }
 
 run_line_ios_review_word_count_sort() {
