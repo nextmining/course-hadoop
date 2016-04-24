@@ -84,7 +84,7 @@ public class NcdcTotalSortJob extends AbstractJob {
         job.setPartitionerClass(TotalOrderPartitioner.class);
         job.setSortComparatorClass(KeyComparator.class);
 
-        Path inputDir = new Path("/user/lineplus/ygbae/ncdc");
+        Path inputDir = new Path("/user/student/ygbae/ncdc");
         Path partitionFilePath = new Path(inputDir, "_partition");
         TotalOrderPartitioner.setPartitionFile(job.getConfiguration(), partitionFilePath);
 
@@ -97,7 +97,14 @@ public class NcdcTotalSortJob extends AbstractJob {
         InputSampler.writePartitionFile(job, sampler);
 
         // Add to DistributedCache
-        String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
+        /**
+         * [주의] getPartitionFile(conf)와 같이 사용할 경우 아래와 같은 에러 발생하므로
+         * getPartitionFile(job.getConfiguration()와 같이 해주어야 정상적으로 실행된다
+         * Exception in thread "main" java.io.FileNotFoundException: File does not exist: hdfs://nextmining04:8020/user/student/_partition.lst
+         * 참조: http://m.blog.csdn.net/article/details?id=25649945
+         */
+        //String partitionFile = TotalOrderPartitioner.getPartitionFile(conf);
+        String partitionFile = TotalOrderPartitioner.getPartitionFile(job.getConfiguration());
         logger.info("*** partitionFile = " + partitionFile);
         URI partitionUri = new URI(partitionFile);
         job.addCacheFile(partitionUri);
