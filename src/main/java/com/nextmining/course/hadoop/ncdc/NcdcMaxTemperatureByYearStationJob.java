@@ -60,7 +60,7 @@ public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
                 // --------------> START
                 /*
                  * --------------------------------------------------------------
-                 * 연도(year)-기상대ID(station id)별로 기온을 write하세.
+                 * 연도(year)-기상대ID(station id)별로 기온을 write 하세요.
                  * -------------------------------------------------------------
                  */
             	
