@@ -105,7 +105,7 @@ public class NcdcJoinJob extends AbstractJob {
         protected void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             parser.parse(value);
-            context.write(new TextPairWritable(parser.getStationId(), "1"), value);
+            context.write(new TextPairWritable(parser.getStationId(), "2"), value);
         }
     }
 
@@ -119,7 +119,7 @@ public class NcdcJoinJob extends AbstractJob {
         protected void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             if (parser.parse(value)) {
-                context.write(new TextPairWritable(parser.getStationId(), "0"),
+                context.write(new TextPairWritable(parser.getStationId(), "1"),
                         new Text(parser.getStationName()));
             }
         }

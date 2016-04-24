@@ -12,7 +12,7 @@ public class FileSystemCat {
 
     public static void main(String[] args) throws Exception {
         //String uri = args[0];
-        String uri = "hftp://nextmining04:50070/coll/input/ncdc/metadata/stations-fixed-width.txt";
+        String uri = "hftp://nextmining04:50070/user/student/data/ncdc/metadata/stations-fixed-width.txt";
         //String uri = "/coll/input/ncdc/metadata/stations-fixed-width.txt";
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(URI.create(uri), conf);

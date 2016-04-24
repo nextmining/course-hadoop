@@ -112,7 +112,7 @@ ncdc_station_name()
 
 	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcStationNameJob \
 	    -D mapreduce.job.reduces=${num_reducers} \
-	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
+	    -files "/home/student/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
 		--input "${input}" \
 		--output "${output}" \
 		--minTemperature "0";
