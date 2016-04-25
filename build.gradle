@@ -20,8 +20,9 @@ group 'com.nextmining'
 version '1.0.1'
 
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'idea'
 apply plugin: 'scala'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.7
 

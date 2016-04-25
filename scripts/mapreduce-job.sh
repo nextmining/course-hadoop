@@ -33,6 +33,25 @@ word_count()
 }
 
 #######################################
+# Word count 작업을 Spark로 실행한다.
+#######################################
+word_count_by_spark()
+{
+	local input=$1
+	local output=$2
+
+	$HADOOP fs -rmr ${output} >& /dev/null || true
+
+	spark-submit \
+	--class com.nextmining.course.hadoop.wordcount.WordCountSparkJob \
+	--num-executors 3 \
+	--master yarn-client \
+	${JOB_JAR} \
+	--input ${input} \
+	--output ${output}
+}
+
+#######################################
 # NCDC데이터에서 연도별 기온 데이터를 기온기준으로 내림차순으로 전체 정렬을 한다.
 #
 #######################################
@@ -213,6 +232,9 @@ run_word_count() {
 	word_count "/user/student/data/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count"
 }
 
+run_word_count_by_spark() {
+    word_count_by_spark "/user/student/data/docs/1400-8.txt" "${MY_HDFS_HOME}/word_count_by_spark1"
+}
 run_ncdc_partial_sort() {
     ncdc_partial_sort "/user/student/data/ncdc/all" "${MY_HDFS_HOME}/ncdc/partial_sort"
 }
