@@ -33,12 +33,52 @@ import java.util.Set;
  */
 public class NcdcMaxTemperatureByYearStationJob extends AbstractJob {
 
-	@Override
-	public int run(String[] args) throws Exception {
-		
-		
-		return 0;
-	}
+    private static final Logger logger = LoggerFactory.getLogger(NcdcMaxTemperatureByYearStationJob.class);
+
+    private static final String JOB_NAME_PREFIX = "[ygbae]";
+
+    public static void main(String[] args) throws Exception {
+        int exitCode = ToolRunner.run(new NcdcMaxTemperatureByYearStationJob(), args);
+        System.exit(exitCode);
+    }
+
+    @Override
+    public int run(String[] args) throws Exception {
+        addOption("input", "i", "The path for job input(comma separated)", true);
+        addOption("output", "o", "The path for job output", true);
+
+        parseArguments(args);
+
+        // input path
+        String[] inputs = getOption("input").split(",");
+        Set<Path> inputPaths = new HashSet<Path>();
+        for (String input : inputs) {
+            inputPaths.add(new Path(input));
+        }
+
+        // output path
+        Path outputPath = new Path(getOption("output"));
+
+        Configuration conf = getConf();
+
+        Job job = Job.getInstance(conf);
+        job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());
+        job.setJarByClass(NcdcMaxTemperatureByYearStationJob.class);
+        job.setMapOutputKeyClass(TextPairWritable.class);
+        job.setMapOutputValueClass(IntWritable.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        job.setMapperClass(NcdcMaxTemperatureMapper.class);
+        job.setReducerClass(NcdcMaxTemperatureReducer.class);
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(job, inputPaths.toArray(new Path[inputPaths.size()]));
+        FileOutputFormat.setOutputPath(job, outputPath);
+
+
+        return job.waitForCompletion(true) ? 0 : 1;
+    }
 	
 	/**
      * Mapper.
