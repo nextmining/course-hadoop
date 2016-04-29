@@ -169,7 +169,7 @@ ncdc_max_temperature_by_year_station()
 
 	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcMaxTemperatureByYearStationJob \
 	    -D mapreduce.job.reduces=${num_reducers} \
-	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
+	    -files "/home/student/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
 		--input "${input}" \
 		--output "${output}";
 }
@@ -184,7 +184,7 @@ ncdc_max_temperature_by_year_station1()
 
 	$HADOOP jar $JOB_JAR com.nextmining.course.hadoop.ncdc.NcdcMaxTemperatureByYearStationJob1 \
 	    -D mapreduce.job.reduces=${num_reducers} \
-	    -files "/home/lineplus/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
+	    -files "/home/student/data/input/ncdc/metadata/stations-fixed-width.txt#stations-fixed-width.txt" \
 		--input "${input}" \
 		--output "${output}";
 }
