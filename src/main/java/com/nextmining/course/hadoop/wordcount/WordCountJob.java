@@ -75,15 +75,7 @@ public class WordCountJob extends AbstractJob {
          * job.setOutputFormatClass();  // 출력데이터 포맷
          * -------------------------------------------------------------
          */
-        job.setJobName(JOB_NAME_PREFIX + getClass().getSimpleName());   // 맵리듀스 잡 이름
-        job.setJarByClass(WordCountJob.class);                          // 잡 드라이버 클래스명
-        job.setMapOutputKeyClass(Text.class);                           // 매퍼 출력 key 데이터타입
-        job.setMapOutputValueClass(IntWritable.class);                  // 매퍼 출력 value 데이터타입
-        job.setOutputKeyClass(Text.class);                              // 리듀서 출력 key 데이터타입
-        job.setOutputValueClass(IntWritable.class);                     // 리듀서 출력 value 데이터타입
-        job.setMapperClass(WordCountMapper.class);                      // 매퍼 클래스명
-        job.setReducerClass(WordCountReducer.class);                    // 리듀서 클래스명
-        job.setInputFormatClass(TextInputFormat.class);                 // 입력데이터 포맷
+
         // <-------------- END
         
 
@@ -125,11 +117,8 @@ public class WordCountJob extends AbstractJob {
              * 추출된 워드를 리듀서에서 카운트하기 위해 key, value를 출력한다.
              * -------------------------------------------------------------
              */
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
-            }
+
+            //context.write(word, one);
             // <-------------- END
         }
     }
@@ -160,13 +149,9 @@ public class WordCountJob extends AbstractJob {
              * key별 합산된 key, value를 최종 출력한다.
              * -------------------------------------------------------------
              */
-            int sum = 0;
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            result.set(sum);
-            context.write(key, result);
+
             // <-------------- END
+            //context.write(key, sum)
         }
     }
 
