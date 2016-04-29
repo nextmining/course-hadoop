@@ -20,6 +20,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.spark.sql.catalyst.expressions.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +138,7 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
              * 키를 TextPairWritable 클래스를 이용하여 평점, 키워드 쌍으로 키를 만들고, 건수(1건)을 리듀스로 write 하세요.
              * -------------------------------------------------------------
              */
-            
+
             
             // <-------------- END
 
@@ -271,8 +272,8 @@ public class LineReviewWordCountByRateJob extends AbstractJob {
              * 즉, 키는 평점별 워드별 카운트 건수를 계산하는 것이기 때문에 출력하는 키는 rate, word 조합이어야 함.
              * -------------------------------------------------------------
              */
-           
             
+
             // <-------------- END
         }
     }

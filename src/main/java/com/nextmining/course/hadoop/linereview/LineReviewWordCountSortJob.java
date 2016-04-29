@@ -157,10 +157,13 @@ public class LineReviewWordCountSortJob extends AbstractJob {
              * 평점, 워드카운트 순으로 정렬하기 위해 키를 IntPairWritable를 이용해 완성하세요.
              * -------------------------------------------------------------
              */
+
             /*
             context.write(new IntPairWritable(여기?, 여기?),
                     new Text(rating + "\t" + word + "\t" + count));
             */
+
+            // <-------------- END
         }
     }
 
