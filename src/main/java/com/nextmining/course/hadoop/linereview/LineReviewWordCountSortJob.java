@@ -70,7 +70,7 @@ public class LineReviewWordCountSortJob extends AbstractJob {
         /*
          * --------------------------------------------------------------
          * 평점별-워드카운트순(내림차순)으로 보조정렬을 하기 위해 아래의 
-         * Key partioner, Sort comparator, Group comparator를 정의해 주세요.
+         * Key partitioner, Sort comparator, Group comparator를 정의해 주세요.
          * -------------------------------------------------------------
          */
         /*
