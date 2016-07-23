@@ -23,6 +23,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'scala'
 apply plugin: 'maven'
+apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
 
@@ -46,6 +47,7 @@ sourceSets {
     main.compileClasspath += configurations.provided
     test.compileClasspath += configurations.provided
     test.runtimeClasspath += configurations.provided
+    eclipse.classpath.plusConfigurations += [configurations.provided]
 
     main {
         scala {
