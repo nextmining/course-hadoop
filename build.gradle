@@ -39,7 +39,7 @@ repositories {
 
 configurations {
     provided
-    providedCompile
+    //providedCompile
 }
 
 sourceSets {
@@ -63,7 +63,7 @@ dependencies {
     //----------------------------------------
     // Hadoop client 라이브러리로 compile 단계에서만 필요하며 실제 build될 jar 파일에는 포함시키지 않는다.
     provided("org.apache.hadoop:hadoop-client:2.6.0")
-    providedCompile("org.apache.hadoop:hadoop-client:2.6.0")
+    //providedCompile("org.apache.hadoop:hadoop-client:2.6.0")
     //----------------------------------------
 
     //----------------------------------------
@@ -75,9 +75,9 @@ dependencies {
     //----------------------------------------
     // For spark
     provided("org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}")
+    //providedCompile("org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}")
     provided("org.apache.spark:spark-mllib_${scalaBinaryVersion}:${sparkVersion}")
-    providedCompile("org.apache.spark:spark-core_${scalaBinaryVersion}:${sparkVersion}")
-    providedCompile("org.apache.spark:spark-mllib_${scalaBinaryVersion}:${sparkVersion}")
+    //providedCompile("org.apache.spark:spark-mllib_${scalaBinaryVersion}:${sparkVersion}")
     //----------------------------------------
 
     //----------------------------------------
@@ -88,9 +88,9 @@ dependencies {
     //----------------------------------------
 
     provided("log4j:log4j:1.2.17")
-    providedCompile("log4j:log4j:1.2.17")
+    //providedCompile("log4j:log4j:1.2.17")
     provided("org.slf4j:slf4j-log4j12:1.6.6")
-    providedCompile("org.slf4j:slf4j-log4j12:1.6.6")
+    //providedCompile("org.slf4j:slf4j-log4j12:1.6.6")
 
     compile('com.fasterxml.jackson.core:jackson-core:2.3.0')
     compile('com.fasterxml.jackson.core:jackson-annotations:2.3.0')
