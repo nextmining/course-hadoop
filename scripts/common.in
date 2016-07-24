@@ -12,11 +12,14 @@ MY_HOME=/home/student/projects/ygbae
 MY_HDFS_HOME=/user/student/ygbae
 ################
 
+################
 # For hadoop
+# [주의] crontab으로 job을 자동으로 실행할 경우 linux 계정의 .bash_profile에 설정해 놓은 hadoop관련 환경 정보를
+# 사용할 수 없을 수 있기 때문에 아래와 같이 스크립트에서 명시적으로 환경정보를 세팅해 준다.
 HADOOP_HOME=/usr/local/hadoop-2.6.0
 export HADOOP_CONF_DIR="/home/student/tools/hadoop-conf"
-
 HADOOP="${HADOOP_HOME}/bin/hadoop --config $HADOOP_CONF_DIR"
+################
 
 PROJECT_HOME=${MY_HOME}/course-hadoop
 JOB_JAR=${PROJECT_HOME}/build/libs/course-hadoop-1.0.1-all.jar
