@@ -2,7 +2,6 @@ buildscript {
     ext {
         scalaBinaryVersion = '2.10'
         sparkVersion = '1.6.1'
-        //scalaVersion = '2.11.8'
     }
     repositories {
         mavenCentral()
